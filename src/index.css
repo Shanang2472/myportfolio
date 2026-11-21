@@ -1,0 +1,30 @@
+:root {
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --bg: #0b0d10;
+  --surface: #111419;
+  --surface-2: #161a20;
+  --text: #edf1f5;
+  --muted: #9aa3af;
+  --line: rgba(255,255,255,.09);
+  --accent: #59a8ff;
+  --accent-soft: rgba(89,168,255,.12);
+}
+:root[data-theme="light"] {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --surface-2: #edf1f6;
+  --text: #171b21;
+  --muted: #667181;
+  --line: rgba(17,24,39,.12);
+  --accent: #1268c5;
+  --accent-soft: rgba(18,104,197,.1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 0; background: var(--bg); color: var(--text); }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+::selection { background: var(--accent); color: white; }
