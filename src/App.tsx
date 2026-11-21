@@ -318,7 +318,7 @@ function App() {
           <div className="resume-header-copy">
             <h1>De La Cruz Steve C.</h1>
             <p>UI/UX &amp; Full-Stack Developer</p>
-            <div>0961 039 4664 · Steve.dlcrz06@gmail.com</div>
+            <div>0961 039 4664 · Steve.dlcrz08@gmail.com</div>
             <div>81 Narra St., Brgy. San Roque, Madera Homes 1, Cainta, Rizal</div>
           </div>
         </header>
