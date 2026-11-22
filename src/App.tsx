@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ArrowUpRight, BriefcaseBusiness, ChevronRight, Code2, Database,
+  ArrowUpRight, BriefcaseBusiness, ChevronLeft, ChevronRight, Code2, Database,
   Download,   ExternalLink, Layers3, MapPin, Menu,
   Moon, ServerCog, Sun, X, CheckCircle2, Building2, GraduationCap,
   ShoppingBag, ShieldCheck, Zap
 } from 'lucide-react'
 import caintaPhoto from './assets/cainta-photo.PNG'
 import ekunsulta from './assets/e-kunsulta.PNG'
-import findMyItem from './assets/find-my-item.PNG'
+import findMyItemDashboard from './assets/findmyitem-dashboard.PNG'
+import findMyItemFoundItems from './assets/findmyitem-found-items.PNG'
+import findMyItemLostItems from './assets/findmyitem-lost-items.PNG'
+import findMyItemQrScan from './assets/findmyitem-qr-scan.PNG'
+import findMyItemReportFound from './assets/findmyitem-report-found.PNG'
+import findMyItemReportLost from './assets/findmyitem-report-lost.PNG'
+import findMyItemMyClaims from './assets/findmyitem-my-claims.PNG'
+import findMyItemHonorRoll from './assets/findmyitem-honor-roll.PNG'
+import findMyItemMyQr from './assets/findmyitem-my-qr.PNG'
 import occhris from './assets/occhris.PNG'
 import procurement from './assets/procurement.PNG'
 import schoolEnrollment from './assets/school-enrollment.PNG'
@@ -29,12 +37,13 @@ type Project = {
   role: string
   status: 'Active development' | 'Completed concept' | 'In development'
   image: string
+  previewImages?: string[]
 }
 
 const projects: Project[] = [
   { name: 'Cainta Photography Studio MIS', category: 'Business', description: 'A management system for customer bookings, studio packages, schedules, payments, and operations.', problem: 'Reservations and studio operations require reliable scheduling and customer records.', solution: 'Provide an organized booking workflow with packages, availability, and payment monitoring.', features: ['Customer management', 'Booking management', 'Package catalog', 'Schedule availability', 'Reservations', 'Payment monitoring'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'Full-stack development and database design', status: 'In development', image: caintaPhoto },
   { name: 'E-Kunsulta Guidance Counseling System', category: 'Education', description: 'An appointment platform for student counseling requests and counselor availability.', problem: 'Appointment requests and status updates need a consistent, accessible process.', solution: 'Create a web-based scheduling workflow for booking, approval, and monitoring.', features: ['Appointment booking', 'Counselor availability', 'Approval workflow', 'Rescheduling', 'Cancellation', 'Status monitoring'], technologies: ['PHP', 'MySQL', 'HTML', 'CSS', 'JavaScript'], role: 'Web development and database implementation', status: 'Completed concept', image: ekunsulta },
-  { name: 'FindMyItem Lost and Found Portal', category: 'Government', description: 'A campus lost-and-found portal for reporting, locating, claiming, and recovering belongings.', problem: 'Lost items are difficult to record and match with their rightful owners.', solution: 'Centralize lost and found reports with location hotspots, QR stickers, claims, and recovery analytics.', features: ['Lost item reports', 'Found item registration', 'Claim management', 'QR stickers', 'Campus hotspot map', 'Recovery tracking'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'System design and full-stack development', status: 'In development', image: findMyItem },
+  { name: 'FindMyItem Lost and Found Portal', category: 'Government', description: 'A campus lost-and-found portal for reporting, locating, claiming, and recovering belongings.', problem: 'Lost items are difficult to record and match with their rightful owners.', solution: 'Centralize lost and found reports with location hotspots, QR stickers, claims, and recovery analytics.', features: ['Lost item reports', 'Found item registration', 'Claim management', 'QR stickers', 'Campus hotspot map', 'Recovery tracking'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'System design and full-stack development', status: 'In development', image: findMyItemDashboard, previewImages: [findMyItemDashboard, findMyItemLostItems, findMyItemFoundItems, findMyItemReportLost, findMyItemReportFound, findMyItemMyClaims, findMyItemQrScan, findMyItemHonorRoll, findMyItemMyQr] },
   { name: 'OCC HR Information System', category: 'Government', description: 'A human resources platform for employee records, attendance, contracts, leave, payroll, and performance.', problem: 'HR records and organizational analytics are commonly managed through separate processes.', solution: 'Bring core HR operations into role-based dashboards with reporting and document workflows.', features: ['Employee records', 'Contracts', 'Attendance', 'Leave management', 'Performance', 'Payroll'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'Full-stack development and system integration', status: 'In development', image: occhris },
   { name: 'LGU Automated Procurement and Supplier Evaluation', category: 'Government', description: 'A procurement platform for APP planning, requisitions, solicitations, obligations, and supplier evaluation.', problem: 'Manual procurement processes slow approvals and make audit trails difficult to manage.', solution: 'Digitize procurement workflows with role-based access, supplier evaluation, and budget reporting.', features: ['APP planning', 'Requisitions', 'RFQ and solicitation', 'Supplier evaluation', 'Contracts', 'Budget tracking'], technologies: ['React', 'Node.js', 'NestJS', 'MySQL', 'Gemini API'], role: 'Full-stack development and system integration', status: 'In development', image: procurement },
   { name: 'School Enrollment and Scheduling System', category: 'Education', description: 'A school enrollment platform for students, grade levels, sections, teachers, and academic setup.', problem: 'Enrollment records and section capacity are difficult to manage across academic terms.', solution: 'Centralize the school year setup, student entry, sections, teaching loads, and enrollment operations.', features: ['Student enrollment', 'Grade levels', 'Sections', 'Teacher management', 'Teaching load', 'Enrollment reports'], technologies: ['React', 'TypeScript', 'PHP', 'Node.js', 'MySQL'], role: 'System analysis and full-stack development', status: 'In development', image: schoolEnrollment },
@@ -82,6 +91,8 @@ function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [filter, setFilter] = useState('All')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [previewIndex, setPreviewIndex] = useState(0)
+  const [modalPreviewIndex, setModalPreviewIndex] = useState(0)
   const [skillTab, setSkillTab] = useState(0)
   const [notice, setNotice] = useState('')
 
@@ -101,6 +112,25 @@ function App() {
   useEffect(() => {
     document.body.style.overflow = selectedProject ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
+  }, [selectedProject])
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setPreviewIndex(current => (current + 1) % 9)
+    }, 3200)
+    return () => window.clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    setModalPreviewIndex(0)
+  }, [selectedProject])
+
+  useEffect(() => {
+    if (!selectedProject?.previewImages) return
+    const interval = window.setInterval(() => {
+      setModalPreviewIndex(current => (current + 1) % selectedProject.previewImages!.length)
+    }, 4000)
+    return () => window.clearInterval(interval)
   }, [selectedProject])
 
   const scrollTo = (id: string) => {
@@ -237,7 +267,29 @@ function App() {
               {filteredProjects.map((project, index) => (
                 <motion.article className="project-card" layout key={project.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: index * 0.03 }}>
                   <button className="project-preview" onClick={() => setSelectedProject(project)} aria-label={`View ${project.name}`}>
-                    <img src={project.image} alt={`${project.name} interface`} />
+                    {project.previewImages && (
+                      <motion.img
+                        key={`${project.name}-${previewIndex}`}
+                        src={project.previewImages[previewIndex % project.previewImages.length]}
+                        alt={`${project.name} interface preview ${previewIndex % project.previewImages.length + 1}`}
+                        initial={{ opacity: 0, scale: 1.015 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.55 }}
+                      />
+                    )}
+                    {!project.previewImages && <img src={project.image} alt={`${project.name} interface`} />}
+                    {project.previewImages && (
+                      <>
+                        <div className="preview-counter" aria-hidden="true">
+                          {String((previewIndex % project.previewImages.length) + 1).padStart(2, '0')} / {String(project.previewImages.length).padStart(2, '0')}
+                        </div>
+                        <div className="preview-dots" aria-hidden="true">
+                          {project.previewImages.map((preview, dotIndex) => (
+                            <span key={preview} className={dotIndex === previewIndex % project.previewImages!.length ? 'active' : ''} />
+                          ))}
+                        </div>
+                      </>
+                    )}
                     <span className="view-project">View case study <ArrowUpRight size={15} /></span>
                   </button>
                   <div className="project-info">
@@ -363,7 +415,47 @@ function App() {
               <p className="eyebrow">{selectedProject.category} / Case Study</p>
               <h2 id="project-modal-title">{selectedProject.name}</h2>
               <p className="modal-description">{selectedProject.description}</p>
-              <div className="modal-preview"><img src={selectedProject.image} alt={`${selectedProject.name} full interface`} /></div>
+              {selectedProject.previewImages && (
+                <div className="modal-slideshow">
+                  <div className="modal-preview">
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={modalPreviewIndex}
+                        src={selectedProject.previewImages[modalPreviewIndex]}
+                        alt={`${selectedProject.name} screenshot ${modalPreviewIndex + 1}`}
+                        initial={{ opacity: 0, x: 18 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -18 }}
+                        transition={{ duration: 0.38 }}
+                      />
+                    </AnimatePresence>
+                    <button
+                      className="slideshow-arrow slideshow-prev"
+                      onClick={() => setModalPreviewIndex(current => (current - 1 + selectedProject.previewImages!.length) % selectedProject.previewImages!.length)}
+                      aria-label="Previous screenshot"
+                    ><ChevronLeft size={18} /></button>
+                    <button
+                      className="slideshow-arrow slideshow-next"
+                      onClick={() => setModalPreviewIndex(current => (current + 1) % selectedProject.previewImages!.length)}
+                      aria-label="Next screenshot"
+                    ><ChevronRight size={18} /></button>
+                  </div>
+                  <div className="project-gallery" aria-label={`${selectedProject.name} screenshot gallery`}>
+                    {selectedProject.previewImages.map((preview, index) => (
+                      <button
+                        className={`gallery-image ${index === modalPreviewIndex ? 'active' : ''}`}
+                        key={preview}
+                        onClick={() => setModalPreviewIndex(index)}
+                        aria-label={`Preview screenshot ${index + 1}`}
+                      >
+                        <img src={preview} alt="" />
+                        <span>{String(index + 1).padStart(2, '0')}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {!selectedProject.previewImages && <div className="modal-preview"><img src={selectedProject.image} alt={`${selectedProject.name} full interface`} /></div>}
               <div className="modal-grid">
                 <div><h3>Problem</h3><p>{selectedProject.problem}</p></div>
                 <div><h3>Solution</h3><p>{selectedProject.solution}</p></div>
