@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
 import {
   ArrowUpRight, BriefcaseBusiness, ChevronLeft, ChevronRight, Code2, Database,
   Download,   ExternalLink, Layers3, MapPin, Menu,
   Moon, ServerCog, Sun, X, CheckCircle2, Building2, GraduationCap,
-  ShoppingBag, ShieldCheck, Zap
+  ShoppingBag, ShieldCheck, Zap, Sparkles, Wrench
 } from 'lucide-react'
 import caintaPhoto from './assets/cainta-photo.PNG'
 import ekunsulta from './assets/e-kunsulta.PNG'
@@ -96,6 +96,13 @@ function App() {
   const [skillTab, setSkillTab] = useState(0)
   const [notice, setNotice] = useState('')
 
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 30,
+    restDelta: 0.001
+  })
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
@@ -121,9 +128,10 @@ function App() {
     return () => window.clearInterval(interval)
   }, [])
 
-  useEffect(() => {
+  const openProject = (project: Project) => {
     setModalPreviewIndex(0)
-  }, [selectedProject])
+    setSelectedProject(project)
+  }
 
   useEffect(() => {
     if (!selectedProject?.previewImages) return
@@ -144,21 +152,64 @@ function App() {
 
   return (
     <div className="app-shell">
+      <motion.div className="scroll-progress" style={{ scaleX }} />
       <header className="navbar">
-        <button className="brand" onClick={() => scrollTo('home')} aria-label="Go to home">
+        <motion.button
+          className="brand"
+          onClick={() => scrollTo('home')}
+          aria-label="Go to home"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
           <span>SDC</span>
-        </button>
+        </motion.button>
         <nav className="desktop-nav" aria-label="Main navigation">
-          {navItems.map(item => (
-            <button key={item} className={activeSection === item.toLowerCase() ? 'active' : ''} onClick={() => scrollTo(item.toLowerCase())}>{item}</button>
-          ))}
+          {navItems.map(item => {
+            const isActive = activeSection === item.toLowerCase()
+            return (
+              <button
+                key={item}
+                className={isActive ? 'active' : ''}
+                onClick={() => scrollTo(item.toLowerCase())}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="navPill"
+                    className="nav-pill-bg"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span style={{ position: 'relative', zIndex: 1 }}>{item}</span>
+              </button>
+            )
+          })}
         </nav>
         <div className="nav-actions">
-          <button className="icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}>
+          <motion.button
+            className="icon-button"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+            whileHover={{ scale: 1.08, rotate: 15 }}
+            whileTap={{ scale: 0.92 }}
+          >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <button className="nav-cta" onClick={() => scrollTo('projects')}>View Work</button>
-          <button className="icon-button menu-button" onClick={() => setMenuOpen(true)} aria-label="Open navigation"><Menu size={20} /></button>
+          </motion.button>
+          <motion.button
+            className="nav-cta"
+            onClick={() => scrollTo('projects')}
+            whileHover={{ scale: 1.03, y: -1 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            View Work
+          </motion.button>
+          <motion.button
+            className="icon-button menu-button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open navigation"
+            whileTap={{ scale: 0.92 }}
+          >
+            <Menu size={20} />
+          </motion.button>
         </div>
       </header>
 
@@ -173,68 +224,261 @@ function App() {
 
       <main>
         <section id="home" className="hero-section">
-          <motion.div className="hero-copy" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
-            <div className="availability"><span /> Available for opportunities</div>
-            <p className="eyebrow">STEVE DE LA CRUZ · FULL-STACK DEVELOPER</p>
-            <h1>Building digital solutions.<br /><span>Engineering better systems.</span></h1>
-            <p className="hero-description">I design and develop modern web applications and information systems that help organizations streamline operations, automate workflows, and manage information efficiently.</p>
-            <div className="hero-actions">
-              <button className="primary-button" onClick={() => scrollTo('projects')}>Explore My Projects <ArrowUpRight size={17} /></button>
-              <button className="secondary-button" onClick={() => scrollTo('experience')}>View Experience</button>
-              <button className="text-button" onClick={() => window.print()}>Download / Print Resume <Download size={16} /></button>
-            </div>
-            <div className="location"><MapPin size={15} /> Cainta, Rizal, Philippines</div>
+          <motion.div
+            className="hero-copy"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.div
+              className="availability"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <span /> Available for opportunities
+            </motion.div>
+            <motion.p
+              className="eyebrow"
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, delay: 0.18 }}
+            >
+              STEVE DE LA CRUZ · FULL-STACK DEVELOPER
+            </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25 }}
+            >
+              Building digital solutions.<br /><span>Engineering better systems.</span>
+            </motion.h1>
+            <motion.p
+              className="hero-description"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.35 }}
+            >
+              I design and develop modern web applications and information systems that help organizations streamline operations, automate workflows, and manage information efficiently.
+            </motion.p>
+            <motion.div
+              className="hero-actions"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+            >
+              <motion.button
+                className="primary-button"
+                onClick={() => scrollTo('projects')}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Explore My Projects <ArrowUpRight size={17} />
+              </motion.button>
+              <motion.button
+                className="secondary-button"
+                onClick={() => scrollTo('experience')}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                View Experience
+              </motion.button>
+              <motion.button
+                className="text-button"
+                onClick={() => window.print()}
+                whileHover={{ x: 3 }}
+              >
+                Download / Print Resume <Download size={16} />
+              </motion.button>
+            </motion.div>
+            <motion.div
+              className="location"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.55 }}
+            >
+              <MapPin size={15} /> Cainta, Rizal, Philippines
+            </motion.div>
           </motion.div>
 
-          <motion.div className="system-visual" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.12 }}>
-            <img className="hero-profile-image" src={profileImage} alt="Steve Dela Cruz" />
+          <motion.div
+            className="system-visual"
+            initial={{ opacity: 0, scale: 0.93, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.div
+              className="hero-ambient-glow"
+              animate={{ scale: [1, 1.12, 1], opacity: [0.45, 0.75, 0.45] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.img
+              className="hero-profile-image"
+              src={profileImage}
+              alt="Steve Dela Cruz"
+              animate={{ y: [-3, 4, -3] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+            />
           </motion.div>
         </section>
 
         <section id="about" className="section">
-          <div className="section-heading">
-            <p className="eyebrow">01 / ABOUT</p>
+          <motion.div
+            className="section-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <p className="eyebrow">01 / ABOUT ME</p>
             <h2>From technical fundamentals<br />to complete systems.</h2>
-          </div>
+          </motion.div>
           <div className="about-layout">
-            <div className="about-copy">
-              <p>I am an Information Systems undergraduate with hands-on experience in technical services, freelance software development, and business application development.</p>
-              <p>My journey started with hardware installation and technical troubleshooting before gradually transitioning into web application development and full-stack software engineering. I enjoy understanding how organizations operate and turning their processes into efficient digital solutions.</p>
-              <p>For me, software development is about understanding problems, designing effective systems, and building solutions that create real value.</p>
-            </div>
-            <div className="highlight-grid">
-              {[
-                [Layers3, 'System Development', 'Complete web applications and information systems'],
-                [Building2, 'Business Solutions', 'Digital workflows for organizational processes'],
-                [Zap, 'Technical Versatility', 'Hardware, software, databases, and integrations'],
-                [ChevronRight, 'Continuous Improvement', 'Learning and refining development practices'],
-              ].map(([Icon, title, text]) => {
-                const HighlightIcon = Icon as typeof Layers3
-                return <div className="highlight-card" key={String(title)}><HighlightIcon size={20} /><h3>{String(title)}</h3><p>{String(text)}</p></div>
-              })}
-            </div>
+            <motion.div
+              className="about-copy"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.65 }}
+            >
+              <p className="about-lead">
+                I am Steve De La Cruz, a Full-Stack Developer, technology enthusiast, and aspiring IT entrepreneur with a strong passion for software development, technology, and problem-solving.
+              </p>
+              <p>
+                My journey in technology started with hands-on technical work, including television installation and repair, basic electronics, computer hardware setup and troubleshooting, and air-conditioning installation and maintenance. Over time, my interest grew beyond hardware and technical services, leading me into the world of software development and system engineering.
+              </p>
+              <p>
+                I have developed an interest in building practical, scalable, and user-centered digital solutions. My experience and projects involve developing various information systems, including LGU Management Systems, Procurement and Supplier Evaluation Systems, School Information Management Systems, Human Resource Information Systems, Point of Sale Systems, Barangay Complaint Management Systems, and other business applications.
+              </p>
+              <p>
+                My technical interests and experience include frontend development using React, JavaScript, TypeScript, HTML, and CSS; backend development using PHP and Node.js; database management using MySQL and SQLite; and integrating REST APIs and artificial intelligence into applications. I also explore modern development tools, deployment platforms, automation, and application security.
+              </p>
+              <p>
+                Beyond writing code, I enjoy understanding how organizations operate and identifying opportunities where technology can improve existing processes. I am particularly interested in enterprise systems, business automation, ERP platforms, and integrated information management solutions.
+              </p>
+              <p>
+                I consider myself a curious, creative, adaptable, and self-driven individual. I enjoy exploring unfamiliar technologies, experimenting with new tools, learning through practical experience, and turning ideas into functional applications. I also recognize that learning is a continuous process, and I constantly challenge myself to improve my technical knowledge, programming fundamentals, and problem-solving abilities.
+              </p>
+              <p>
+                Outside software development, I have interests in photography, visual design, creative storytelling, music and songwriting, electronics, hardware troubleshooting, and learning new languages, particularly Japanese.
+              </p>
+              <p>
+                I also have an entrepreneurial mindset. Being involved in the planning of an IT Consultancy Enterprise has strengthened my interest in creating technology-driven solutions, collaborating with other professionals, and eventually developing software products that can serve businesses, educational institutions, government organizations, and communities.
+              </p>
+              <motion.div
+                className="about-quote"
+                whileHover={{ scale: 1.01, x: 4 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <p>
+                  &ldquo;I believe that technology is more than just writing code. It is about understanding problems, designing solutions, continuously improving, and creating something meaningful that people can actually use.&rdquo;
+                </p>
+              </motion.div>
+              <motion.div
+                className="about-goal-card"
+                whileHover={{ scale: 1.01, y: -2 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <span className="goal-tag">CORE GOAL</span>
+                <p>
+                  <strong>My goal is to continue growing as a software developer, strengthen my expertise in information systems and enterprise software, and contribute to building innovative digital solutions that make a real difference.</strong>
+                </p>
+              </motion.div>
+            </motion.div>
+            <aside className="about-sidebar" aria-label="Key highlights">
+              <div className="highlight-grid">
+                {[
+                  [Layers3, 'System Architecture', 'LGU, School, HRIS, POS & business management systems'],
+                  [Building2, 'Business & ERP Automation', 'Digitizing complex organizational processes & workflows'],
+                  [Zap, 'Full-Stack & AI Versatility', 'React, Node.js, PHP, MySQL, SQLite & AI integrations'],
+                  [Wrench, 'Hardware & Electronics Roots', 'Hands-on technical foundation in electronics & troubleshooting'],
+                  [BriefcaseBusiness, 'IT Consultancy Mindset', 'Scalable software solutions for institutions & communities'],
+                  [Sparkles, 'Creative Pursuits', 'Photography, visual design, music songwriting & Japanese'],
+                ].map(([Icon, title, text], index) => {
+                  const HighlightIcon = Icon as typeof Layers3
+                  return (
+                    <motion.div
+                      className="highlight-card"
+                      key={String(title)}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: '-40px' }}
+                      transition={{ delay: index * 0.06, duration: 0.45 }}
+                      whileHover={{ y: -6, scale: 1.02 }}
+                    >
+                      <HighlightIcon size={20} />
+                      <h3>{String(title)}</h3>
+                      <p>{String(text)}</p>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </aside>
           </div>
         </section>
 
         <section id="skills" className="section">
-          <div className="section-heading">
+          <motion.div
+            className="section-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+          >
             <p className="eyebrow">02 / SKILLS</p>
             <h2>Capabilities across the stack.</h2>
-          </div>
+          </motion.div>
           <div className="skills-layout">
             <div className="skill-tabs" role="tablist">
-              {skills.map((skill, index) => (
-                <button key={skill.title} role="tab" aria-selected={skillTab === index} className={skillTab === index ? 'active' : ''} onClick={() => setSkillTab(index)}>
-                  <skill.icon size={18} /> {skill.title} <ChevronRight size={16} />
-                </button>
-              ))}
+              {skills.map((skill, index) => {
+                const isActive = skillTab === index
+                return (
+                  <button
+                    key={skill.title}
+                    role="tab"
+                    aria-selected={isActive}
+                    className={isActive ? 'active' : ''}
+                    onClick={() => setSkillTab(index)}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeSkillTabIndicator"
+                        className="skill-tab-indicator"
+                        transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                      />
+                    )}
+                    <skill.icon size={18} style={{ position: 'relative', zIndex: 1 }} />
+                    <span style={{ position: 'relative', zIndex: 1 }}>{skill.title}</span>
+                    <ChevronRight size={16} style={{ position: 'relative', zIndex: 1 }} />
+                  </button>
+                )
+              })}
             </div>
             <div className="skill-panel">
               <AnimatePresence mode="wait">
-                <motion.div key={skillTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+                <motion.div
+                  key={skillTab}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.28 }}
+                >
                   <p className="eyebrow">{skills[skillTab].title}</p>
                   <h3>{skills[skillTab].title} toolkit</h3>
-                  <div className="tag-grid">{skills[skillTab].items.map(item => <div className="technology-tag" key={item}>{item}</div>)}</div>
+                  <div className="tag-grid">
+                    {skills[skillTab].items.map((item, index) => (
+                      <motion.div
+                        className="technology-tag"
+                        key={item}
+                        initial={{ opacity: 0, scale: 0.94, y: 8 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{ delay: index * 0.03, duration: 0.3 }}
+                        whileHover={{ scale: 1.04, y: -2 }}
+                      >
+                        {item}
+                      </motion.div>
+                    ))}
+                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -242,15 +486,33 @@ function App() {
         </section>
 
         <section id="experience" className="section">
-          <div className="section-heading">
+          <motion.div
+            className="section-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+          >
             <p className="eyebrow">03 / JOURNEY</p>
             <h2>Professional experience.</h2>
-          </div>
+          </motion.div>
           <div className="timeline">
             {experience.map(([year, title, text], index) => (
-              <motion.div className="timeline-item" key={year} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }}>
+              <motion.div
+                className="timeline-item"
+                key={year}
+                initial={{ opacity: 0, x: -18 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: index * 0.045, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ x: 4 }}
+              >
                 <div className="timeline-year">{year}</div>
-                <div className="timeline-dot" />
+                <motion.div
+                  className="timeline-dot"
+                  whileHover={{ scale: 1.4 }}
+                  transition={{ type: 'spring', stiffness: 400 }}
+                />
                 <div className="timeline-content"><h3>{title}</h3><p>{text}</p></div>
               </motion.div>
             ))}
@@ -258,15 +520,50 @@ function App() {
         </section>
 
         <section id="projects" className="section">
-          <div className="section-heading row-heading">
+          <motion.div
+            className="section-heading row-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+          >
             <div><p className="eyebrow">04 / PROJECTS</p><h2>Selected work.</h2></div>
-            <div className="project-filters">{filters.map(item => <button key={item} className={filter === item ? 'active' : ''} onClick={() => setFilter(item)}>{item}</button>)}</div>
-          </div>
+            <div className="project-filters">
+              {filters.map(item => {
+                const isActive = filter === item
+                return (
+                  <button
+                    key={item}
+                    className={isActive ? 'active' : ''}
+                    onClick={() => setFilter(item)}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeFilterIndicator"
+                        className="filter-pill-bg"
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      />
+                    )}
+                    <span style={{ position: 'relative', zIndex: 1 }}>{item}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </motion.div>
           <motion.div className="project-grid" layout>
             <AnimatePresence>
               {filteredProjects.map((project, index) => (
-                <motion.article className="project-card" layout key={project.name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ delay: index * 0.03 }}>
-                  <button className="project-preview" onClick={() => setSelectedProject(project)} aria-label={`View ${project.name}`}>
+                <motion.article
+                  className="project-card"
+                  layout
+                  key={project.name}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.4, delay: index * 0.03 }}
+                  whileHover={{ y: -8 }}
+                >
+                  <button className="project-preview" onClick={() => openProject(project)} aria-label={`View ${project.name}`}>
                     {project.previewImages && (
                       <motion.img
                         key={`${project.name}-${previewIndex}`}
@@ -305,15 +602,35 @@ function App() {
         </section>
 
         <section id="services" className="section">
-          <div className="section-heading">
+          <motion.div
+            className="section-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+          >
             <p className="eyebrow">05 / SERVICES</p>
             <h2>How I can help.</h2>
-          </div>
+          </motion.div>
           <div className="services-grid">
             {services.map(([title, text, Icon], index) => (
-              <motion.article className="service-card" key={title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }}>
+              <motion.article
+                className="service-card"
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: index * 0.04, duration: 0.5 }}
+                whileHover={{ y: -6, scale: 1.02 }}
+              >
                 <div className="service-number">{String(index + 1).padStart(2, '0')}</div>
-                <Icon size={22} />
+                <motion.div
+                  whileHover={{ rotate: 10, scale: 1.15 }}
+                  transition={{ type: 'spring', stiffness: 350 }}
+                  style={{ display: 'inline-block' }}
+                >
+                  <Icon size={22} />
+                </motion.div>
                 <h3>{title}</h3><p>{text}</p>
               </motion.article>
             ))}
@@ -321,10 +638,16 @@ function App() {
         </section>
 
         <section className="section process-section">
-          <div className="section-heading">
+          <motion.div
+            className="section-heading"
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.6 }}
+          >
             <p className="eyebrow">06 / PROCESS</p>
             <h2>A structured way to build.</h2>
-          </div>
+          </motion.div>
           <div className="process-grid">
             {[
               ['Discovery', 'Understand goals, problems, and requirements.'],
@@ -335,14 +658,38 @@ function App() {
               ['Deployment', 'Configure production environments and release.'],
               ['Maintenance', 'Monitor, troubleshoot, and improve the system.'],
             ].map(([title, text], index) => (
-              <div className="process-step" key={title}><div>{String(index + 1).padStart(2, '0')}</div><h3>{title}</h3><p>{text}</p></div>
+              <motion.div
+                className="process-step"
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: index * 0.05, duration: 0.5 }}
+                whileHover={{ y: -4 }}
+              >
+                <div>{String(index + 1).padStart(2, '0')}</div>
+                <h3>{title}</h3><p>{text}</p>
+              </motion.div>
             ))}
           </div>
         </section>
 
         <section className="section education-section">
-          <div className="education-card">
-            <div className="education-icon"><GraduationCap size={28} /></div>
+          <motion.div
+            className="education-card"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.65 }}
+            whileHover={{ y: -4 }}
+          >
+            <motion.div
+              className="education-icon"
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ duration: 0.7, ease: 'easeInOut' }}
+            >
+              <GraduationCap size={28} />
+            </motion.div>
             <div>
               <p className="eyebrow">EDUCATION</p>
               <h2>Bachelor of Science in<br />Information Systems</h2>
@@ -353,15 +700,30 @@ function App() {
               </div>
             </div>
             <div className="interests"><p>Academic interests</p>{['Information Systems', 'Enterprise Software', 'Database Engineering', 'Business Automation', 'AI Integration'].map(item => <span key={item}>{item}</span>)}</div>
-          </div>
+          </motion.div>
         </section>
 
       </main>
 
       <footer>
-        <button className="brand" onClick={() => scrollTo('home')}><span>SDC</span></button>
+        <motion.button
+          className="brand"
+          onClick={() => scrollTo('home')}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <span>SDC</span>
+        </motion.button>
         <p>Turning ideas into systems.</p>
-        <button className="back-top" onClick={() => scrollTo('home')} aria-label="Back to top">↑</button>
+        <motion.button
+          className="back-top"
+          onClick={() => scrollTo('home')}
+          aria-label="Back to top"
+          whileHover={{ scale: 1.15, y: -3 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          ↑
+        </motion.button>
       </footer>
 
       <article className="resume-print" aria-label="Printable resume">
@@ -409,8 +771,26 @@ function App() {
 
       <AnimatePresence>
         {selectedProject && (
-          <motion.div className="modal-backdrop" role="presentation" onMouseDown={() => setSelectedProject(null)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="project-modal" role="dialog" aria-modal="true" aria-labelledby="project-modal-title" onMouseDown={event => event.stopPropagation()} initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20 }}>
+          <motion.div
+            className="modal-backdrop"
+            role="presentation"
+            onMouseDown={() => setSelectedProject(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <motion.div
+              className="project-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="project-modal-title"
+              onMouseDown={event => event.stopPropagation()}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.96 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+            >
               <button className="icon-button modal-close" onClick={() => setSelectedProject(null)} aria-label="Close project details"><X /></button>
               <p className="eyebrow">{selectedProject.category} / Case Study</p>
               <h2 id="project-modal-title">{selectedProject.name}</h2>
