@@ -7,6 +7,36 @@ import {
   ShoppingBag, ShieldCheck, Zap, Sparkles, Wrench
 } from 'lucide-react'
 import caintaPhoto from './assets/cainta-photo.PNG'
+import caintaMisHomeCategories from './assets/cainta-mis-home-categories.png'
+import caintaMisLogin from './assets/cainta-mis-login.jpg'
+import caintaMisNotifications from './assets/cainta-mis-notifications.jpg'
+import caintaMisAdminFinance from './assets/cainta-mis-admin-finance.png'
+import caintaMisStudioOperator from './assets/cainta-mis-studio-operator.png'
+import caintaMisCustomerPrintOrders from './assets/cainta-mis-customer-print-orders.png'
+import caintaMisCustomerBookings from './assets/cainta-mis-customer-bookings.png'
+import caintaMisStudioDashboard from './assets/cainta-mis-studio-dashboard.png'
+import caintaMisWhyBook from './assets/cainta-mis-why-book.png'
+import caintaMisFeaturedStudios from './assets/cainta-mis-featured-studios.png'
+import caintaMisHowItWorks from './assets/cainta-mis-how-it-works.png'
+import caintaMisCalendar from './assets/cainta-mis-calendar.png'
+import caintaMisConflicts from './assets/cainta-mis-conflicts.png'
+import caintaMisAdminGrossSales from './assets/cainta-mis-admin-gross-sales.jpg'
+import caintaMisAdminOverview from './assets/cainta-mis-admin-overview.png'
+import caintaMisReportsDetailed from './assets/cainta-mis-reports-detailed.jpg'
+import caintaMisReportsTrends from './assets/cainta-mis-reports-trends.png'
+import caintaMisReportsAnalytics from './assets/cainta-mis-reports-analytics.png'
+import caintaMisReviews from './assets/cainta-mis-reviews.png'
+import caintaMisCustomerSavedStudios from './assets/cainta-mis-customer-saved-studios.jpg'
+import caintaMisAdminStudios from './assets/cainta-mis-admin-studios.jpg'
+import caintaMisStudioManagement from './assets/cainta-mis-studio-management.jpg'
+import caintaMisAdminSubscriptions from './assets/cainta-mis-admin-subscriptions.png'
+import caintaMisSystemUsers from './assets/cainta-mis-system-users.png'
+import caintaMisWalkinPayment from './assets/cainta-mis-walkin-payment.jpg'
+import caintaMisWalkinConfirmed from './assets/cainta-mis-walkin-confirmed.png'
+import caintaMisWalkinService from './assets/cainta-mis-walkin-service.png'
+import caintaMisWalkinCustomerForm from './assets/cainta-mis-walkin-customer-form.jpg'
+import caintaMisPrintShop from './assets/cainta-mis-print-shop.png'
+import caintaMisPaymentProofs from './assets/cainta-mis-payment-proofs.png'
 import ekunsulta from './assets/e-kunsulta.PNG'
 import findMyItemDashboard from './assets/findmyitem-dashboard.PNG'
 import findMyItemFoundItems from './assets/findmyitem-found-items.PNG'
@@ -41,7 +71,7 @@ type Project = {
 }
 
 const projects: Project[] = [
-  { name: 'Cainta Photography Studio MIS', category: 'Business', description: 'A management system for customer bookings, studio packages, schedules, payments, and operations.', problem: 'Reservations and studio operations require reliable scheduling and customer records.', solution: 'Provide an organized booking workflow with packages, availability, and payment monitoring.', features: ['Customer management', 'Booking management', 'Package catalog', 'Schedule availability', 'Reservations', 'Payment monitoring'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'Full-stack development and database design', status: 'In development', image: caintaPhoto },
+  { name: 'Cainta Photography Studio MIS', category: 'Business', description: 'A management system for customer bookings, studio packages, schedules, payments, and operations.', problem: 'Reservations and studio operations require reliable scheduling and customer records.', solution: 'Provide an organized booking workflow with packages, availability, and payment monitoring.', features: ['Customer management', 'Booking management', 'Package catalog', 'Schedule availability', 'Reservations', 'Payment monitoring'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'Full-stack development and database design', status: 'In development', image: caintaPhoto, previewImages: [caintaMisHomeCategories, caintaMisLogin, caintaMisAdminOverview, caintaMisAdminGrossSales, caintaMisAdminFinance, caintaMisAdminStudios, caintaMisAdminSubscriptions, caintaMisSystemUsers, caintaMisStudioDashboard, caintaMisStudioOperator, caintaMisStudioManagement, caintaMisCalendar, caintaMisConflicts, caintaMisReportsAnalytics, caintaMisReportsDetailed, caintaMisReportsTrends, caintaMisReviews, caintaMisPaymentProofs, caintaMisCustomerBookings, caintaMisCustomerPrintOrders, caintaMisCustomerSavedStudios, caintaMisWalkinCustomerForm, caintaMisWalkinService, caintaMisWalkinPayment, caintaMisWalkinConfirmed, caintaMisPrintShop, caintaMisNotifications, caintaMisFeaturedStudios, caintaMisHowItWorks, caintaMisWhyBook] },
   { name: 'E-Kunsulta Guidance Counseling System', category: 'Education', description: 'An appointment platform for student counseling requests and counselor availability.', problem: 'Appointment requests and status updates need a consistent, accessible process.', solution: 'Create a web-based scheduling workflow for booking, approval, and monitoring.', features: ['Appointment booking', 'Counselor availability', 'Approval workflow', 'Rescheduling', 'Cancellation', 'Status monitoring'], technologies: ['PHP', 'MySQL', 'HTML', 'CSS', 'JavaScript'], role: 'Web development and database implementation', status: 'Completed concept', image: ekunsulta },
   { name: 'FindMyItem Lost and Found Portal', category: 'Government', description: 'A campus lost-and-found portal for reporting, locating, claiming, and recovering belongings.', problem: 'Lost items are difficult to record and match with their rightful owners.', solution: 'Centralize lost and found reports with location hotspots, QR stickers, claims, and recovery analytics.', features: ['Lost item reports', 'Found item registration', 'Claim management', 'QR stickers', 'Campus hotspot map', 'Recovery tracking'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'System design and full-stack development', status: 'In development', image: findMyItemDashboard, previewImages: [findMyItemDashboard, findMyItemLostItems, findMyItemFoundItems, findMyItemReportLost, findMyItemReportFound, findMyItemMyClaims, findMyItemQrScan, findMyItemHonorRoll, findMyItemMyQr] },
   { name: 'OCC HR Information System', category: 'Government', description: 'A human resources platform for employee records, attendance, contracts, leave, payroll, and performance.', problem: 'HR records and organizational analytics are commonly managed through separate processes.', solution: 'Bring core HR operations into role-based dashboards with reporting and document workflows.', features: ['Employee records', 'Contracts', 'Attendance', 'Leave management', 'Performance', 'Payroll'], technologies: ['React', 'TypeScript', 'Node.js', 'Database'], role: 'Full-stack development and system integration', status: 'In development', image: occhris },
@@ -123,7 +153,7 @@ function App() {
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setPreviewIndex(current => (current + 1) % 9)
+      setPreviewIndex(current => current + 1)
     }, 3200)
     return () => window.clearInterval(interval)
   }, [])
